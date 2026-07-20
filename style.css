@@ -159,6 +159,11 @@ a {
   transform: translateY(-4px);
 }
 
+.card-soon {
+  border: 1px dashed var(--text-muted);
+  background: transparent;
+}
+
 .card h3 {
   margin-bottom: 0.5rem;
 }
