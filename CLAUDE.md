@@ -7,8 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Personal portfolio website for Raven McCloud — a single-page static site built with
 plain HTML and CSS. No frameworks, no build step, no JavaScript.
 
-- Live site: https://cloud7-code.github.io/portfolio/
-- Repo: Cloud7-code/portfolio (GitHub Pages, deployed from the `main` branch)
+- Live site: https://neko787.github.io/portfolio/
+- Repo: Neko787/portfolio (GitHub Pages, deployed from the `main` branch)
 - The git repository is the `portfolio/` folder, not its parent.
 
 ## Files

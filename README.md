@@ -2,7 +2,7 @@
 
 My personal portfolio website — built with plain HTML and CSS.
 
-**Live site:** https://cloud7-code.github.io/portfolio/
+**Live site:** https://neko787.github.io/portfolio/
 
 ## What's inside
 
@@ -14,7 +14,7 @@ My personal portfolio website — built with plain HTML and CSS.
 No build tools needed. Clone the repo and open `index.html` in a browser:
 
 ```
-git clone https://github.com/Cloud7-code/portfolio.git
+git clone https://github.com/Neko787/portfolio.git
 ```
 
 ## Status
