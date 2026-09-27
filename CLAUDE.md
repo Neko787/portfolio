@@ -16,6 +16,8 @@ plain HTML and CSS. No frameworks, no build step, no JavaScript.
 - `portfolio/index.html` — the entire page: nav, hero, about, projects, and contact sections
 - `portfolio/style.css` — all styling
 - `portfolio/README.md` — short project overview
+- `portfolio/uni-tracker/` — separate Docker project (n8n + Ollama + university portal
+  scraper), not part of the website. Setup steps are in `uni-tracker/README.md`.
 
 ## Working on this project
 

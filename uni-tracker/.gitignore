@@ -1,0 +1,3 @@
+# Secrets and personal data never go to GitHub
+.env
+data/

@@ -1,0 +1,75 @@
+{
+  "id": "unitrackersetup1",
+  "name": "00 - Setup check (Ollama + Telegram)",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "id": "7d1f7a52-3f5e-4a6a-9d0e-1c2b3a4d5e01",
+      "name": "Run this test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "parameters": {}
+    },
+    {
+      "id": "7d1f7a52-3f5e-4a6a-9d0e-1c2b3a4d5e02",
+      "name": "Ask local AI (Ollama)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.OLLAMA_URL }}/api/chat",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $env.OLLAMA_MODEL, stream: false, messages: [{ role: 'user', content: 'In one short, friendly sentence, confirm that my university tracker setup is working.' }] }) }}",
+        "options": {
+          "timeout": 600000
+        }
+      }
+    },
+    {
+      "id": "7d1f7a52-3f5e-4a6a-9d0e-1c2b3a4d5e03",
+      "name": "Send to my Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.TELEGRAM_API_BASE }}/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chat_id: $env.TELEGRAM_CHAT_ID, text: '✅ n8n + Ollama (' + $env.OLLAMA_MODEL + ') are working.\\n\\n' + $json.message.content }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Run this test": {
+      "main": [
+        [
+          {
+            "node": "Ask local AI (Ollama)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask local AI (Ollama)": {
+      "main": [
+        [
+          {
+            "node": "Send to my Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {}
+}

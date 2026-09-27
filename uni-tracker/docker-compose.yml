@@ -1,0 +1,75 @@
+# University tracker - Docker stack
+#
+# Step 1 (this file): n8n (the automation) + Ollama (the local AI).
+# Later steps add the scraper + dashboard service to this same file.
+#
+#   docker compose up -d        start everything in the background
+#   docker compose ps           see what's running
+#   docker compose logs -f n8n  follow n8n's logs
+#   docker compose down         stop (your data stays in the volumes)
+
+name: uni-tracker
+
+services:
+  n8n:
+    image: n8nio/n8n:2.40.7
+    restart: unless-stopped
+    ports:
+      # Reachable only from this computer. Change to "5678:5678" to open it to your home network.
+      - "127.0.0.1:5678:5678"
+    environment:
+      - GENERIC_TIMEZONE=${TZ:-UTC}
+      - TZ=${TZ:-UTC}
+      - N8N_DIAGNOSTICS_ENABLED=false
+      # n8n listens on IPv6 by default and crash-loops on machines where IPv6 is off.
+      - N8N_LISTEN_ADDRESS=0.0.0.0
+      # The workflows read the settings below with $env.NAME, which n8n blocks unless this is false.
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      - OLLAMA_URL=http://ollama:11434
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5:7b}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-}
+      - TELEGRAM_API_BASE=${TELEGRAM_API_BASE:-https://api.telegram.org}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      # Lets you import the workflows in this repo with one command (see README).
+      - ./n8n/workflows:/workflows:ro
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    # NVIDIA GPU? Uncomment this block (needs the NVIDIA Container Toolkit on Linux,
+    # or Docker Desktop with the WSL2 backend on Windows). Without it Ollama runs on the CPU.
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  # Runs once: downloads the local AI model on first start (a few GB), then exits.
+  ollama-pull:
+    image: ollama/ollama:latest
+    restart: "no"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    entrypoint: ["ollama", "pull", "${OLLAMA_MODEL:-qwen2.5:7b}"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+volumes:
+  n8n_data:
+  ollama_data:
