@@ -16,6 +16,8 @@ plain HTML and CSS. No frameworks, no build step, no JavaScript.
 - `portfolio/index.html` — the entire page: nav, hero, about, projects, and contact sections
 - `portfolio/style.css` — all styling
 - `portfolio/README.md` — short project overview
+- `portfolio/Dockerfile` — packages the site into an nginx image (copies only `index.html` and `style.css`; add new asset files to its `COPY` line)
+- `portfolio/.github/workflows/docker.yml` — on every push to `main`, builds the image and pushes it to `ghcr.io/neko787/portfolio` (tags `latest` and `sha-<commit>`)
 
 ## Working on this project
 
